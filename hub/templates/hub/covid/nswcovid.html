@@ -1,0 +1,241 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<!--D3 JS Section-->
+<script type="module">
+
+    import { creatMultiTimeSeriesGraphCSV } from '{% static "hub/js/graphLibrary.js" %}'
+
+    import {
+        select,
+        line,
+        geoEquirectangular,
+        geoPath,
+        axisBottom,
+        scaleLinear,
+        timeFormat,
+        json,
+        axisLeft,
+        scaleThreshold,
+        max,
+        csv,
+        timeParse,
+        scaleTime,
+        extent,
+        schemeBlues,
+    } from "https://cdn.skypack.dev/d3@7";
+
+    import { zoom as d3Zoom} from "https://cdn.skypack.dev/d3-zoom@3";
+
+    // Dimensions
+    var margin = { top: 30, right: 0, bottom: 30, left: 50 },
+        width = 240 - margin.left - margin.right,
+        height = 210 - margin.top - margin.bottom;
+
+    creatMultiTimeSeriesGraphCSV(
+        "https://raw.githubusercontent.com/abuujo/dataFiles/main/NSW%20Covid/covid_notif_date_lga.csv",
+        "#groupChart",
+        margin,
+        width,
+        height,
+        false,
+        false,
+        false,
+        5
+    )
+
+    // Dimensions
+    var margin3 = { top: 10, right: 30, bottom: 30, left: 60 },
+        width3 = 750 - margin3.left - margin3.right,
+        height3 = 400 - margin3.top - margin3.bottom;
+
+    // =============== Second Section - - D3 Map ===========================================================
+    // D3 GEO MAP
+    // Inner City Graphs
+    const svg = select("#lineGraphSwitch1")
+        .append("svg")
+        .attr("viewBox", "0 0 " + (width3 + margin3.left + margin3.right) + " " + (height3 + margin3.top + margin3.bottom))
+        .append("g")
+        .attr("transform", `translate(${margin3.left},${margin3.top})`);
+
+
+    var colorScale = scaleThreshold()
+        .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
+        .range(schemeBlues[7]);
+
+    // Map and projection
+    const projection = geoEquirectangular().scale(50000).center([151.3093, -34.1]).translate([600, 400]);
+
+    const geoGenerator = geoPath()
+        .projection(projection)
+
+    // Loading large data set
+    async function fetchAllData() {
+
+        beginLoading();
+        // await response of a fetch call
+        const response = await fetch('https://data.gov.au/geoserver/nsw-local-government-areas/wfs?request=GetFeature&typeName=ckan_f6a00643_1842_48cd_9c2f_df23a3a1dc1e&outputFormat=json');
+        // once the promise is resolved convert the response to an object
+        const data = await response.json();
+        finishLoading();
+        loadMap(data);
+    }
+
+    function beginLoading() {
+        select('#title').text('Loading data - please wait');
+    }
+
+    function finishLoading() {
+        select('#title').text('Finished');
+    }
+
+    // LGA info
+
+    function loadMap(geodata) {
+        csv("https://raw.githubusercontent.com/abuujo/dataFiles/main/NSW%20Covid/covid_lga.csv",
+
+            // When reading the csv, I must format variables:
+            function (d) {
+                return { date: timeParse("%Y-%m-%d")(d.date), value: d.value, name: d.lga_name19 }
+            }).then(function (data) {
+
+
+                const g = svg.append("g");
+
+                const u = g
+                    .selectAll('path')
+                    .data(geodata.features)
+
+                const mouseover = function (event, d) {
+                    select(this).style('stroke-width', 2)
+                }
+
+                const mousemove = function (event, d) {
+                    var title = this.__data__.properties.nsw_lga__3
+                };
+
+                const mouseleave = function (event, d) {
+                    select(this).style('stroke-width', 0.5);
+                }
+
+                select('#title').text('LIVERPOOL');
+
+                u.enter()
+                    .append('path')
+                    .attr("d", geoGenerator)
+                    .attr("fill", function (d) {
+                        if (this.__data__.properties.nsw_lga__3 == "UNINCORPORATED") { return 'var(--background)' } else { return 'var(--cardbg)' }
+                    })
+                    .attr('stroke', 'var(--text)')
+                    .attr('stroke-width', 0.5)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+                    .on("click", function () {
+                        var title = this.__data__.properties.nsw_lga__3;
+                        select('#title').text(title);
+                        update(title);
+                    })
+
+                var zoom = d3Zoom()
+                    .scaleExtent([1, 8])
+                    .on('zoom', function (event) {
+                        g.selectAll('path')
+                            .attr('transform', event.transform);
+
+                    })
+                svg.call(zoom);
+
+                // X Scale based on values
+                const x = scaleTime()
+                    .domain(extent(data, function (d) { return d.date; }))
+                    .range([0, width3]);
+
+                // Append X axis, angle the ticks.
+                svg.append("g")
+                    .attr("transform", `translate(0, ${height3})`)
+                    .call(axisBottom(x).ticks(10).tickFormat(timeFormat("%Y-%m")))
+
+                // Y Scale based on value
+                const y = scaleLinear()
+                    .domain([0, max(data, function (d) { return +d.value; })])
+                    .range([height3, 0]);
+
+                svg.append("g")
+                    .call(axisLeft(y));
+
+                // Initialize line with first group of the list
+                const myLine = svg
+                    .append('g')
+                    .append("path")
+                    .datum(data.filter(function (d) { return d.name == "LIVERPOOL" }))
+                    .attr("d", line()
+                        .x(function (d) { return x(d.date) })
+                        .y(function (d) { return y(+d.value) })
+                    )
+                    .style("stroke-width", 4)
+                    .style("fill", "none")
+                    .attr("class", "line")
+
+                // A function that update the chart
+                function update(selectedGroup) {
+
+                    // Create new data with the selection?
+                    const dataFilter = data.filter(function (d) { return d.name == selectedGroup })
+
+                    // Give these new data to update line
+                    myLine
+                        .datum(dataFilter)
+                        .transition()
+                        .duration(1000)
+                        .attr("d", line()
+                            .x(function (d) { return x(d.date) })
+                            .y(function (d) { return y(+d.value) })
+                        )
+                        .attr("class", "line")
+                }
+            })
+    }
+
+
+    fetchAllData();
+
+</script>
+<br />
+<!--Content Section-->
+<h1><strong>NSW Covid-19 And The Various Outbreak</strong></h1>
+<div class="header_links">
+    <a href="{% url 'home'  %}"><em>⏎ Return</em></a>
+    <a
+        href="https://data.nsw.gov.au/data/dataset/covid-19-cases-by-location/resource/21304414-1ff1-4243-a5d2-f52778048b29"><em>NSW
+            Health Data</em></a>
+</div>
+
+<div class="footnoteone"><a href="{% url 'fn_public_transit'  %}"><strong>*</strong> Footnote - Covid And Public
+        Transport</a></div>
+<div class="footnoteone"><a href="{% url 'fn_postcode'  %}"><strong>†</strong> Footnote - Connect Your Postcode to Your
+        LGA</a></div>
+<br />
+<div id="banner_covid"></div>
+
+<h1><Strong>The Eight LGA's</Strong></h1>
+<p>On July 30th, 2021, NSW health <a href="https://www.health.nsw.gov.au/news/Pages/20210730_01.aspx">posted a
+        message</a> concerning new LGA areas which would incur new restrictions in a bid to slow down the spread of the
+    new strain of Covid-19. The LGA's that were targeted initially were:</p>
+<div id="groupChart"></div>
+<br />
+<p>With the data provided by NSW health (seen in the previous article), we have the ability to see how each LGA fared
+    during the course of the lockdown and how long it took to begin reducing cases. The following graph shows each LGA
+    and their daily reported cases:</p>
+<br />
+
+<h1>Check your own LGA</h1>
+<p>The graph below has a map in the background which you can interact with by dragging and zooming. Click on the LGA you
+    want to look at to update the graph. Note that white sections are unincorporated. Also note that NSW polygon data is
+    very large, so this might take some time to load.</p>
+<br />
+<h3 id="title"></h3>
+<div id="lineGraphSwitch1"></div>
+
+
+{% endblock content %}

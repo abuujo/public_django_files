@@ -1,0 +1,110 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<!--D3 JS Section-->
+<script type="module">
+    import {
+        select,
+        csv,
+        map
+    } from "https://cdn.skypack.dev/d3@7";
+
+    // Dimensions
+    var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+        width = 750 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // Inner City Graphs
+    const svg = select("#selectSub")
+        .append("svg")
+        .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Second section - Inner City Contract Areas
+    csv("https://raw.githubusercontent.com/abuujo/dataFiles/main/NSW%20Covid/suburb_lga.csv",
+
+        // Format date on import
+        function (d) {
+            return { lga: d.lganame, suburb: d.suburbname, postcode: d.postcode, percentage: d.percentage }
+        }).then(function (data) {
+
+
+            // A function that update the chart
+            function update(selectedGroup) {
+
+                // Create new data with the selection?
+                const dataFilter = data.filter(function (d) { return d.postcode == selectedGroup });
+
+                const table = select("#objecttable");
+                const tableBody = table.append("tbody");
+
+                tableBody
+                    .selectAll("tr")
+                    .data(dataFilter)
+                    .enter()
+                    .append("tr")
+                    .selectAll("td")
+                    .data(function (row, i) {
+                        return [
+                            {
+                                column: "LGA Name",
+                                value: row.lga
+                            },
+                            {
+                                column: "Suburb Name",
+                                value: row.suburb
+                            },
+                            {
+                                column: "Postcode",
+                                value: row.postcode
+                            },
+                            {
+                                column: "Percent of Suburb in LGA",
+                                value: row.percentage
+                            }
+                        ];
+                    })
+                    .enter()
+                    .append("td")
+                    .text(function (d) {
+                        return d.value;
+                    });
+
+            }
+
+            document.getElementById("inputPostCode")
+                .addEventListener("keyup", function (event) {
+                    event.preventDefault();
+                    if (event.code == 'Enter') {
+                        update(document.getElementById("inputPostCode").value);
+                    }
+                });
+        })
+
+</script>
+<br />
+<h1><strong>Footnote - Find your LGA</strong></h1>
+<div class="header_links">
+    <a href="{% url 'nswcovid'  %}">⏎ Return</a>
+    <a href="https://www.olg.nsw.gov.au/public/find-my-council/local-government-area-boundaries-and-mapping-information/"><em>Local Government Boundaries and Mapping Resources</em></a>
+</div>
+<br />
+<p>This is just a supporting piece for the the above article. LGA's are a relativley new thing so for people who don't
+    know their own LGA, they can use the checker below to find out. Simply type your postcode into the input field below
+    and hit enter.</p>
+<br />
+<input type="text" id="inputPostCode" placeholder="Enter postcode here" class="search" />
+<br />
+<br />
+<br />
+<table id="objecttable" class="objecttable">
+    <tr>
+        <th>&nbsp;&nbsp;LGA Name</th>
+        <th>Suburb Name</th>
+        <th>Postcode</th>
+        <th>Percentage of Suburb inside LGA</th>
+    </tr>
+</table>
+
+{% endblock content %}

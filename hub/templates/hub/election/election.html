@@ -1,0 +1,252 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<!--D3 JS Section-->
+
+<script type="module">
+
+    import {buildScatterPlotTimeCSV} from '{% static "hub/js/graphLibrary.js" %}'
+
+    // set the dimensions and margins of the graph
+    var margin = { top: 10, right: 30, bottom: 70, left: 60 },
+        width = 750 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    var sub_links_one = [
+        ["https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/primary_vote_p_lnp.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/primary_vote_p_alp.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/primary_vote_p_grn.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/primary_vote_p_onp.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/primary_vote_p_other.csv"],
+
+        ["var(--lnpArea)", "var(--alpArea)", "var(--grnArea)", "var(--onpArea)", "var(--cardbg)"],
+        ["var(--lnpLine)", "var(--alpLine)", "var(--grnLine)", "var(--onpLine)", "var(--cardbg)"],
+    ];
+
+    var sub_links_two = [
+        ["https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/two_party_pref_vote_tpp_lnp.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/two_party_pref_vote_tpp_alp.csv"],
+
+        ["var(--lnpArea)", "var(--alpArea)"],
+        ["var(--lnpLine)", "var(--alpLine)"],
+    ];
+
+    var sub_links_five = [
+        ["https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/preferred_prime_minister_vote_ppm_sm.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/preferred_prime_minister_vote_ppm_aa.csv"],
+
+        ["var(--lnpArea)", "var(--alpArea)"],
+        ["var(--lnpLine)", "var(--alpLine)"],
+    ];
+
+    var labels_three = [
+        ["scomo_sat", "scomo_dissat"],
+        ["var(--grnArea)", "var(--onpArea)"],
+        ["Scomo Satisfaction", "Scomo Dissatisfaction"]
+    ];
+
+    var sub_links_three = [
+        ["https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/leadership_satisfaction_vote_sm_sat.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/leadership_satisfaction_vote_sm_dissat.csv"],
+
+        ["var(--grnArea)", "var(--onpArea)"],
+        ["var(--grnLine)", "var(--onpLine)"],
+    ];
+
+    var sub_links_four = [
+        ["https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/leadership_satisfaction_vote_aa_sat.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/leadership_satisfaction_vote_aa_dissat.csv"],
+
+        ["var(--grnArea)", "var(--onpArea)"],
+        ["var(--grnLine)", "var(--onpLine)"],
+    ];
+
+    var labels_four = [
+        ["aa_s", "aa_d"],
+        ["var(--grnArea)", "var(--onpArea)"],
+        ["Albo Satisfaction", "Albo Dissatisfaction"]
+    ];
+    var labels_five = [
+        ["sm_r", "aa_r"],
+        ["var(--lnpArea)", "var(--alpArea)"],
+        ["Scomo", "Albo"]
+    ];
+
+
+    var labels_one = [
+        ["p_lnp", "p_alp", "p_grn", "p_onp", "p_other",],
+        ["var(--lnpArea)", "var(--alpArea)", "var(--grnArea)", "var(--onpArea)", "var(--cardbg)"],
+        ["Coalition", "Aus Labor Party", "Green Party", "One Nation Party", "Other"]
+    ];
+
+    var labels_two = [
+        ["p_lnp", "p_alp"],
+        ["var(--lnpArea)", "var(--alpArea)"],
+        ["Coalition", "Aus Labor Party"]
+    ];
+
+    // Primary Vote
+    buildScatterPlotTimeCSV(
+        "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/primary_vote_poll_data.csv",
+        "#primary_vote_2022",
+        margin,
+        width,
+        height,
+        false,
+        sub_links_one,
+        labels_one,
+        false,
+        false,
+        true,
+        false
+    );
+
+    // Two party preferred
+    buildScatterPlotTimeCSV(
+        "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/two_party_pref_vote_poll_data.csv",
+        "#tpp_vote_2022",
+        margin,
+        width,
+        height,
+        false,
+        sub_links_two,
+        labels_two,
+        false,
+        false,
+        false,
+        false
+    );
+
+
+    buildScatterPlotTimeCSV(
+        "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/preferred_prime_minister_vote_poll_data.csv",
+        "#ppm_vote_2022",
+        margin,
+        width,
+        height,
+        false,
+        sub_links_five,
+        labels_five,
+        false,
+        false,
+        false,
+        false
+    );
+
+    buildScatterPlotTimeCSV(
+        "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/scomoleadership_satisfaction_vote_poll_data.csv",
+        "#scomo_vote_2022",
+        margin,
+        width,
+        height,
+        false,
+        sub_links_three,
+        labels_three,
+        false,
+        false,
+        false,
+        false
+    );
+
+    buildScatterPlotTimeCSV(
+      "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2022/unweighted/alboleadership_satisfaction_vote_poll_data.csv",
+      "#albo_vote_2022",
+      margin,
+      width,
+      height,
+      false,
+      sub_links_four,
+      labels_four,
+      false,
+      false,
+      false,
+      false
+    );
+
+    // Post SVG
+    handleTabletChange(mediaQuery);
+
+</script>
+<br/>
+<!--Content Section-->
+<h1><strong>Election 2022 Polling / Prediction</strong></h1>
+<div class="header_links">
+    <a href="{% url 'home'  %}">⏎ Return</a>
+    <a href="https://github.com/abuujo/polling_analyser">Polling Analyser Repo</a>
+    <a href="https://en.wikipedia.org/wiki/Category:Opinion_polling_in_Australia">Wikipedia Polling
+            Resourses</a>
+</div>
+
+<div class="footnoteone"><a href="{% url 'fn_polling'  %}"><strong>*</strong> Footnote - Polling in the 2019 election</a></div>
+<div class="footnoteone"><a href="{% url 'fn_meckerras'  %}"><strong>†</strong> Footnote - How the elections work & what
+        is a Mackerras
+        pendulum</a></div>
+<div class="footnoteone"><a href="{% url 'fn_bellwether'  %}"><strong>‡</strong> Footnote - is Eden-Monaro a bellwether
+        seat?</a></div>
+
+<br />
+
+<h4 id="preface"><strong>Preface </strong></h4>
+<p>The polling numbers you see on this page are inaccurate. I believe that the polling done in Australia is
+    generally off, with the 2019 election being a good example of that. In general I believe opinion polling is
+    good for identifying trends, but not for accurate numbers, which are important when trying to predict election
+    outcomes. The goal of this project is to create a weighted polling system that can bring the numbers more in-line
+    with where Australian's are at.</p>
+
+<h4 id="primary_vote_title"><strong>Primary Vote</strong></h4>
+<p>The primary vote in an Australian election showcases the votes people place as their number 1 preferred party.
+    Typically people will cast a ballot with several parties listed with a box next to them. People will write a number
+    1-n for n parties in order of preference. The polling here attempts to show where the voting intentions of
+    Australians are at the time of the poll.</p>
+<div id="primary_vote_2022"></div>
+
+<h4 id="tpp_vote_title"><strong>Two Party Preferred</strong></h4>
+<p>The two-party preferred vote represents the tally once all preferences have been accounted for. On the ballot, people
+    may have put a party as their number 1 preference, but would not have received enough votes. When this happens, the
+    ballot moves on to the number two and so on until it winds up as one of the two parties left (typically the
+    Coalition (Liberal or National party) and Labor). On a national stage, the two-party preferred vote showcases the
+    run-off of each party and is an interesting stat to look for towards the federal election.</p>
+<div id="tpp_vote_2022"></div>
+
+<h4 id="meckerras_title"><strong>Predictions Using The Mackerras Pendulum</strong></h4>
+<p>Now that we have our Two Party Preferred number for the election, we can see the projected outcome on the Meckerras
+    Pendulum. To learn more about it check out the second footnote to the page.</p>
+
+<h4 id="preferred_pm_title"><strong>Preferred Prime Minister</strong></h4>
+<p>Similar to the above category - this measures who people currently prefer as a leader in a one on one setting. This
+    can be a bit tricky as Australian federal parties tend to swap out leaders frequently since the 2007 election, so if
+    either party swaps out their leader before the 2022 election this stat would be a bit less reliable.</p>
+<div id="ppm_vote_2022"></div>
+
+<h4 id="scomo_pm_title"><strong>Scomo Popularity</strong></h4>
+<p>Leadership satisfaction is relatively simple. The polling attempts to find which portion of the sample falls in the
+    satisfied, unsatisfied, and don't know categories. This can give us an indication as to how well a leader is
+    regarded on a national stage, and how that has changed over the course of events such as the Covid-19 outbreak. </p>
+<div id="scomo_vote_2022"></div>
+
+<h4 id="scomo_pm_title"><strong>Albo Popularity</strong></h4>
+<p>Similar to the above, the shadow leadership can be an interesting thing to look at. The values here are wild, which I expect 
+    fall in-line when I finish the weighted polling.
+</p>
+<div id="albo_vote_2022"></div>
+<br/>
+<p><strong>Resources Used:</strong></p>
+<ul>
+  <li>Newspoll-YouGov</li>
+  <li>Roy Morgan</li>
+  <li>Resolve Strategic</li>
+  <li>Essential</li>
+  <li>Australian National University</li>
+</ul>
+<br/>
+<p></strong>Tools used:</strong></p>
+<ul>
+  <li>Jupyter Notebook - for Python analysis</li>
+  <li>Python: Pandas and Numpy</li>
+  <li>Github (data hosting for raw CSV) / site</li>
+  <li>React for the website framework</li>
+  <li>D3.js for the graphs shown</li>
+  <li>React Syntax Highlighter for presenting code</li>
+</ul>
+
+{% endblock content %}

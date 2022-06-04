@@ -1,0 +1,135 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="six columns" style="padding-left:0px; padding-top:0px; ">
+
+        <!--Election 2022-->
+        <div class="showcase">
+            <a href="{% url 'election'  %}">
+                <img src="{% static 'hub/images/banner_election.PNG' %}" class="banner_img" alt="Election 2022">
+                <h3><u>Election 2022</u></h3>
+                <p>Follow my attempt to track and weight the polling data for the 2022 election.</p>
+            </a>
+        </div>
+
+        <!--JS Chess Engine-->
+        <div class="showcase">
+            <a href="{% url 'chess'  %}">
+                <img src="{% static 'hub/images/chess.png' %}" class="banner_img" alt="chess">
+                <h3><u>Chess Engine</u></h3>
+                <p>Play against a simple chess engine I learned to make in 2015.</p>
+            </a>
+        </div>
+
+    </div>
+
+
+    <div class="six columns" style="float: right; padding-right:0px; padding-top:0px; ">
+
+        <!--Covid Data-->
+        <div class="showcase">
+            <a href="{% url 'nswcovid'  %}">
+                <img src="{% static 'hub/images/banner_covid.PNG' %}" class="banner_img" alt="Covid NSW">
+                <h3><u>NSW Covid-19</u></h3>
+                <p>Vairous visualisations showcasing NSW and it's covid-19 outbreaks.</p>
+            </a>
+        </div>
+
+        <!--Covid Data-->
+        <div class="showcase">
+            <a href="{% url 'blog'  %}">
+                <img src="{% static 'hub/images/conway.png' %}" class="banner_img" alt="Blog">
+                <h3><u>Blog</u></h3>
+                <p>My personal blog with various topics from coding to rabbits.</p>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<h6>I work as a data analyst and system developer in the defence industry. All work on this site is a result of personal curiosity.</h6></br>
+
+<h3><Strong>Guides</Strong></h3><br/>
+
+<ul class="posts indent">
+    <li class="posts-list-item">
+        <a class="posts-list-item-title" href="{% url 'django'  %}">
+            <strong>Tips and tricks for working with Django</strong>
+        </a> <br />
+        A useful summary of things I've learned trying to bring this website to life
+    </li>
+
+    <li class="posts-list-item">
+        <a class="posts-list-item-title" href="{% url 'react'  %}">
+            <strong>Building a React data blog with D3.js</strong>
+        </a><br />
+        How to integrate D3 and React to build a data blog
+    </li>
+    <!--
+    <li class="posts-list-item">
+        <a class="posts-list-item-title" href="{% url 'vba'  %}">
+            <strong>Useful VBA Scripts for working with Excel</strong>
+        </a><br />
+        Two of the most useful scripts I found while working with Excel
+    </li>
+    -->
+</ul>
+
+<h3><Strong>Coding Proejcts</Strong></h3></br>
+<div class="indent"><strong><a href="https://github.com/abuujo/blog_app">Django Blog Site (public files)</a></strong> Some of the files from
+this site that can be made public.<br />
+<strong><a href="https://github.com/abuujo/data-portfolio">React Data Blog with D3.js</a></strong> A React site that
+uses D3.js to make data visualisations.<br />
+<strong><a href="https://github.com/abuujo/DungeonRoguelike">C++ Roguelike</a></strong> A simple roguelike game made in
+C++ (continuing project when I get time).<br />
+<strong><a href="https://github.com/abuujo/data-portfolio">Python Polling Analyser</a></strong> Supporting software that
+encompases my attempt to track the polling in Australia. <br />
+<strong><a href="https://github.com/abuujo/mtrn3500_MI">C++ / C Robot Manager</a></strong> Modules that combine to
+manage a robotic vehicle (LIDAR etc.). <br />
+<strong><a href="https://github.com/abuujo/INFS3605">Java Website School Management System</a></strong> INFS3605 Final
+assignment. </div>
+<br/>
+
+<h3><Strong>Professional History</Strong></h3>
+</br>
+<strong>(Current) Reliability Data Analyst (AOR) / Navantia Australia </strong></br>
+<div class="indent">
+<p>My current role is working with the navy in the AORSPO, looking after the HMAS Supply. My roles vary, from FRACAS
+    reporting to being responsible for several key submissions to the navy to developing and implementing many process
+    improvements taking advantage of VBA and Microsoft Access for automation. My understanding of VBA has greatly
+    improved since joining Navantia, as it is the only tool I can work with inside the Defence setting. </p>
+</div>
+
+<strong>Data Engineer &amp; Reporting Specialist / OPEC Systems</strong></br>
+<div class="indent">
+<p>At OPEC Systems I started out as an intern working on their reporting system for financial data. I learned the Excel
+    add-in known as Jet Reporting and quickly became a subject matter expert on it. Using Jet Reporting I developed
+    several key reports used by senior management to monitor and track key business functions. Later down the line,
+    after my internship had ended, I began implementing many process changes to the development of key dashboards and
+    reports.</p>
+<p>I transitioned the company away from Jet Reporting towards Power BI and implemented several functions that took
+    advantage of Power Automate. Among many developments, I helped deploy a Power BI Dashboard that tracked PFAS removal
+    data, which was generated by scheduled PDF data submissions emailed to the firm from several contracted testing
+    labs. This system gave real-time updates of the company's PFAS removal process and was used at several key
+    presentations.</p></div>
+
+<strong>Data Engineer &amp; Unit Tester / Umano</strong></br>
+<div class="indent">
+<p>I began working at Umano temporarily as an aid to help clean and process data. Throughout my time there I took on
+    many roles including developing many unit tests to achieve 95% coverage, implementing KPI analytics frameworks into
+    a Python-based data analysis engine, and contributing to UI and Code design. My time at Umano gave me a much deeper
+    understanding and appreciation of Python and data.</p>
+</div>
+<strong>Data Analyst / Andiron Group</strong></br>
+<div class="indent">
+During my time with Andiron Group, I learned to analyse data
+    to identify and bring out interesting and useful data to the forefront. Using anonymized credit card transactions
+    (millions of data points) in collaboration with Pocketbook I found unique insights pertaining to how Australians
+    spend their money on Valentine's day, how banks generate value from fees (FX fees etc.) and many other interesting
+    insights. This was done using advanced custom queries on big data sets from Amazon Warehousing. During my time I
+    contributed to a new categorisation system and many data standardisation and visualisation techniques. The insights
+    gleaned from this data were features from places like Business Insider to Chanel 9 News. </p>
+</div>
+{% endblock content %}

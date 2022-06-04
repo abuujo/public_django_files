@@ -1,0 +1,179 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<br/>
+<h1><strong>Simple Javascript Chess Engine</strong></h1>
+<div class="header_links">
+	<a href="{% url 'home'  %}">⏎ Return</a>
+	<a href="https://www.chessprogramming.org/Main_Page">
+			Chess Engine Wiki
+		</a>
+	<a href="https://www.youtube.com/watch?v=2eA0bD3wV3Q&list=PLZ1QII7yudbe4gz2gh9BCI6VDA-xafLog">
+			Javascript Chess Engine Tutorial
+		</a>
+</div>
+
+
+<div class="row">
+	<div class="nine columns">
+		<!-- Chess Board section  with FEN input-->
+		<div id="FenInDiv" class="pb-3">
+			Fen:<br />
+			<input type="text" id="fenIn" />
+			<button type="button" id="SetFen" style="color: var(--text);">Set Position</button>
+		</div>
+		<div id="Board">
+
+		</div>
+	</div>
+	<div class="three columns">
+		<!-- Ingame options and info -->
+		<span id="GameStatus">Game Options:</span><br />
+		<div id="EngineOutput" style="color: var(--text);">
+			<select id="ThinkTimeChoice" >
+				<option value="1">1 second</option>
+				<option value="2">2 seconds</option>
+				<option value="4">4 seconds</option>
+				<option value="6">6 seconds</option>
+				<option value="8">8 seconds</option>
+				<option value="10">10 seconds</option>
+			</select>
+			<br />
+			<span id="BestOut">Best Move:</span><br />
+			<span id="DepthOut">Depth:</span><br />
+			<span id="ScoreOut">Score:</span><br />
+			<span id="NodesOut">Nodes:</span><br />
+			<span id="OrderingOut">Ordering:</span><br />
+			<span id="TimeOut">Time:</span>
+			<br />
+		</div>
+	</div>
+
+
+</div>
+<script>
+	// This is necessary since it is difficult to get javascript and django to work together.
+	var url_src = "{% static 'hub/images/ChesPN/' %}"
+</script>
+
+<!-- javascript includes -->
+<!-- Note that the proper ordering of javascript files is important -->
+<!-- Variables defined in defs.js can only be used in main.js if defs is imported first -->
+<script src="{% static 'hub/js/jquery.js' %}"></script>
+<script src="{% static 'hub/js/defs.js' %}"></script>
+<script src="{% static 'hub/js/io.js' %}"></script>
+<script src="{% static 'hub/js/board.js' %}"></script>
+<script src="{% static 'hub/js/movegen.js' %}"></script>
+<script src="{% static 'hub/js/makemove.js' %}"></script>
+<script src="{% static 'hub/js/evaluate.js' %}"></script>
+<script src="{% static 'hub/js/pvtable.js' %}"></script>
+<script src="{% static 'hub/js/search.js' %}"></script>
+<script src="{% static 'hub/js/perft.js' %}"></script>
+<script src="{% static 'hub/js/gui.js' %}"></script>
+<script src="{% static 'hub/js/main.js' %}"></script>
+
+	<!-- Engine Section -->
+	<br/>
+	<div class="info">
+		To play, click a piece to take your move. Once the move is registered the AI will calculate a move and play
+		against you. There are some issues with JavaScript so you need to be scrolled up to the top to play.
+	</div>
+	<br />
+
+	<h1><strong>The AI basic's</strong></h1>
+	<p>The program uses <a href="https://www.chessprogramming.org/Alpha-Beta">alpha-beta</a>, a well-known chess
+		algorithm. In chess, there are several moves that can be made per turn that would be considered legal or moves
+		that follow the rules of the game. Once we have a method of finding these moves (imagine a list of possible
+		moves a player can make on a turn), we can then pick one move from said list. This move if made would change the
+		state of the board, and the player who is up to move. We can repeat this process, and one concept to keep in
+		mind is that imagine we considered four moves, this would be a <em>depth</em> of four. After only a few moves,
+		the total number of possible moves to be considered is exponential, and usually too much for a javascript chess
+		engine to handle.&nbsp;</p>
+	<p>Because of this, we use alpha-beta pruning to trim moves that wouldn't make sense to make. let's say that it was
+		whites' turn to move, they would need to consider what would look like a decision tree. This tree would have
+		layers for each depth layer the algorithm would explore, and branches for every legal move that the algorithm
+		could make. Examining one move, we can see that maybe every possible move black could make in response would
+		result in an even position (either no material lost on either side or equal exchange of material). Then we
+		consider another move and check blacks possible counter moves to it. If on this move we see that one move could
+		result in black taking a piece for free, we wouldn't consider it a good move (this would be a negative
+		position). Thus we prune off this move since we know we can achieve at least an even game with move one. As the
+		simulation goes deeper in-depth, this can become quite hard to keep track of.&nbsp;</p>
+	<h1><strong>A small note on directions</strong></h1>
+	<p>A standard chess board is 8x8 or 64 squares large. For the purposes of this chess game, on the back end, we
+		define it as 10x12. (10 files and 12 ranks). This is so that we can account for out-of-bounds conditions more
+		easily. With this information, we can start to look at what directions or moves a piece can make in its turn,
+		which can be represented by an array of numbers. consider on an 8x8 board, a pawn can only move in one direction
+		which is straight ahead (it can attack in two diagonal positions). If the pawn was on the (file, rank) of (a,2)
+		and we wanted to move it to (a,3) this would move it up on rank. since the board is represented as a
+		1-dimensional array of 64 places this would advance the pawn 8 places, since a2 would be the 8th place in the
+		index (starting at 0, with h being 7th). The pawn would move to 16th place in the index.&nbsp;</p>
+	<p>This same concept can be used in the 10x12 array just by changing some numbers to get the right direction:</p>
+	<pre class="language-javascript"><code>// Available directions a piece can move:
+kings directions = [-1, -10, 1, 10, -9, -11, 9, 11]        // straight and diagonal
+rooks directions = [-1, -10, 1, 10]                        // straight
+bishop directions = [-9, -11, 9, 11]                       // diagonal
+Kinght directions = [-8, -19, -21, -12, 8, 19, 21, 12 ]    // Up two and across one</code></pre>
+	<p>The queen would copy the king's directions and the pawns can be hardcoded.&nbsp;</p>
+	<h1><strong>Understanding the legal move list</strong></h1>
+	<p>One critical element of this is understanding how the chess engine finds for a player to move, which moves they
+		can make. This is a relatively simple algorithm to implement, and I'll write some pseudo-code to explain how it
+		works:</p>
+	<pre class="language-javascript"><code>Side to move:
+   for each piece:
+      if this pieces square + 10 is empty:
+         if this pieces square + 20 is empty and pawn on rank 2 / 7:
+            add pawn starter move
+         Add a pawn quiet move
+
+      if this pieces square + 9 or + 11 have an opponents piece on it:
+         add a pawn capture move
+
+      if side to move can castle and no pieces between castle and king
+         add a castle move // can be KQkq
+
+      sq = pieces square
+      // Note that here the move we get in the loop is say + 10 or -11
+      for each direction in piece directions // the array
+         target square = sq + direction
+         while the square is not off-board
+            if square at piece square + move has an opponent piece on it
+               add a capture move
+            else
+               add a quiet move
+
+            target square += direction // add direction again to square</code></pre>
+	<p>This algorithm would be run at every layer of depth to determine a list of legal moves. Note that this isn't the
+		alpha-beta algorithm, which is applied to this to trim down this list to only moves that make sense to
+		consider.&nbsp;</p>
+	<h1><strong>Fen notation (Forsyth Edwards Notation)</strong></h1>
+	<p>Fen notation (as you can see above the chessboard) is a string of letters and characters that are used to
+		represent a board state. To get a starting idea, let's break down the starting position in fen notation (note
+		that the different sections are separated by a space):</p>
+	<pre class="language-javascript"><code>rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1</code></pre>
+	<p>The first section gives us "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR". This is simple to understand, r
+		represents the rook, n the knight (since k is for king), b for bishop, q for queen, k for king, and p for pawn.
+		The letters are placed together in the same order as they would appear on the board, with the rook next to the
+		knight and so on forming the 'rank' of the board. there are 8 ranks to a chessboard, and in FEN, they are
+		separated with the '/' character. Inside each rank, from left to right are the 'files' from a to h. Whites'
+		pieces are upper case while blacks are lower case. there are four ranks in between them represented with the
+		number 8. which means that there are 8 empty files on that rank. let's take another rank: '/R4p2/', on this
+		rank, file a has the white rook, and file f has the black pawn. we can see that there are four empty ranks
+		between the rook and the pawn, and two more empty files on g and h.&nbsp;</p>
+	<p>The next section contains a 'w' which indicates that white is to move. Black would move if b was in place
+		here.&nbsp;</p>
+	<p>KQkq indicates which side can still castle. Note that movie one rook or one king can permanently remove the
+		ability to castle. There are two castle opportunities for each side, the king side castle (casting with the rook
+		closest to the king) and the queen side castle. for white, this is represented as KQ and kq for black. if no
+		side could castle this section would be '-'. If a bishop or another piece temporarily blocks this (either by
+		putting the king in check or attacking any square in between or the rook itself) the symbols still stay, and are
+		only removed when the move is no longer possible.</p>
+	<p>The en passant target, when none is available, is represented with '-'. Since no side can en passant at the start
+		it is included in the starting position.&nbsp;</p>
+	<p>The next section is the half move clock (the number of half moves (both people moving would be a full move) since
+		a pawn advanced or a piece was captured). This section is used to track the 50 move rule, which dictates that
+		after 50 moves without a capture or pawn move, the next player can claim a draw.</p>
+	<p>The last section is the number of full moves (white then black increments it by 1). I.e. it moves up one after
+		black finished a move.&nbsp;</p>
+
+
+{% endblock content %}

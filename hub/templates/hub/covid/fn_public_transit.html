@@ -1,0 +1,376 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<!--D3 JS Section-->
+<script type="module">
+
+    import {
+        select,
+        line,
+        axisBottom,
+        scaleLinear,
+        scaleOrdinal,
+        timeFormat,
+        axisLeft,
+        max,
+        csv,
+        timeParse,
+        scaleTime,
+        extent,
+        schemeSet2,
+    } from "https://cdn.skypack.dev/d3@7";
+
+    import {createDoubleLineGraphTimeSeriesCSV} from '{% static "hub/js/graphLibrary.js" %}'
+
+    // Dimensions
+    var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+        width = 750 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // Inner City Graphs
+    const svg = select("#lineGraphSwitch1")
+        .append("svg")
+        .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Outer City Graphs
+    const svg2 = select("#lineGraphSwitch2")
+        .append("svg")
+        .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Main Graph
+    var svg1 = select("#lineGraphStart")
+        .append("svg")
+        .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    // First Section - overall bus statistics
+    csv("https://raw.githubusercontent.com/abuujo/dataFiles/main/Bus%20Analysis/bus_months.csv",
+
+        // Format date on import.
+        function (d) {
+            return { date: timeParse("%Y-%m-%d")(d.date), value: d.Adult }
+        }).then(function (data) {
+
+            // X scale based on date
+            const x = scaleTime()
+                .domain(extent(data, function (d) { return d.date; }))
+                .range([0, width]);
+            svg1.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(axisBottom(x));
+
+            // Y scale based on value
+            const yScale = scaleLinear()
+                .domain([0, max(data, function (d) { return +d.value; })])
+                .range([height, 0]);
+            svg1.append("g")
+                .call(axisLeft(yScale).tickFormat(function (d) { return d / 1000000 + " Million" }));
+
+            // line function 2
+            svg1.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("d", line()
+                    .x(function (d) { return x(d.date) })
+                    .y(function (d) { return yScale(d.value) })
+                )
+                .attr("class", "line")
+        })
+
+
+    // Second section - Inner City Contract Areas
+    csv("https://raw.githubusercontent.com/abuujo/dataFiles/main/Bus%20Analysis/bus_months_area_inner.csv",
+
+        // Format date on import
+        function (d) {
+            return { date: timeParse("%Y-%m-%d")(d.date), value: d.value, name: d.ContractArea }
+        }).then(function (data) {
+
+            // Group data sets
+            var allGroup = ["Sydney Metro Bus Contract 6", "Sydney Metro Bus Contract 7", "Sydney Metro Bus Contract 8", "Sydney Metro Bus Contract 9"]
+
+            // display on dropdown
+            select("#selectButton")
+                .selectAll('myOptions')
+                .data(allGroup)
+                .enter()
+                .append('option')
+                .text(function (d) { return d; })
+                .attr("value", function (d) { return d; })
+
+            // X Scale based on values
+            const x = scaleTime()
+                .domain(extent(data, function (d) { return d.date; }))
+                .range([0, width]);
+
+            // Append X axis, angle the ticks.
+            svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(axisBottom(x).ticks(10));
+
+            // Y Scale based on value
+            const y = scaleLinear()
+                .domain([0, max(data, function (d) { return +d.value; })])
+                .range([height, 0]);
+
+            svg.append("g")
+                .call(axisLeft(y));
+
+            // Initialize line with first group of the list
+            const myLine = svg
+                .append('g')
+                .append("path")
+                .datum(data.filter(function (d) { return d.name == "Sydney Metro Bus Contract 6" }))
+                .attr("d", line()
+                    .x(function (d) { return x(d.date) })
+                    .y(function (d) { return y(+d.value) })
+                )
+                .style("stroke-width", 4)
+                .style("fill", "none")
+                .attr("class", "line")
+
+            // A function that update the chart
+            function update(selectedGroup) {
+
+                // Create new data with the selection?
+                const dataFilter = data.filter(function (d) { return d.name == selectedGroup })
+
+                // Give these new data to update line
+                myLine
+                    .datum(dataFilter)
+                    .transition()
+                    .duration(1000)
+                    .attr("d", line()
+                        .x(function (d) { return x(d.date) })
+                        .y(function (d) { return y(+d.value) })
+                    )
+                    .attr("class", "line")
+            }
+
+            // When the button is changed, run the updateChart function
+            select("#selectButton").on("change", function (event, d) {
+                // recover the option that has been chosen
+                const selectedOption = select(this).property("value")
+                // run the updateChart function with this selected option
+                update(selectedOption)
+            })
+
+
+        })
+
+    // Third Section - Outer City
+    csv("https://raw.githubusercontent.com/abuujo/dataFiles/main/Bus%20Analysis/bus_months_area_outer.csv",
+
+        // Format date on import
+        function (d) {
+            return { date: timeParse("%Y-%m-%d")(d.date), value: d.value, name: d.ContractArea }
+        }).then(function (data) {
+
+            // Group outer city contract areas
+            var allGroup1 = ["Sydney Metro Bus Contract 1", "Sydney Metro Bus Contract 2", "Sydney Metro Bus Contract 3", "Sydney Metro Bus Contract 4"
+                , "Sydney Metro Bus Contract 5", "Sydney Metro Bus Contract 10", "Sydney Metro Bus Contract 12", "Sydney Metro Bus Contract 13"
+                , "Sydney Metro Bus Contract 14", "Sydney Metro Bus Contract 15"]
+
+            // Display options on drop down
+            select("#selectButton1")
+                .selectAll('myOptions')
+                .data(allGroup1)
+                .enter()
+                .append('option')
+                .text(function (d) { return d; })
+                .attr("value", function (d) { return d; })
+
+            // X scale based on dates
+            const x = scaleTime()
+                .domain(extent(data, function (d) { return d.date; }))
+                .range([0, width]);
+
+
+            svg2.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(axisBottom(x).ticks(10));
+
+            // Y scale based on value
+            const y = scaleLinear()
+                .domain([0, max(data, function (d) { return +d.value; })])
+                .range([height, 0]);
+
+            svg2.append("g")
+                .call(axisLeft(y));
+
+            // Initialize line with first group of the list
+            const myLine2 = svg2
+                .append('g')
+                .append("path")
+                .datum(data.filter(function (d) { return d.name == "Sydney Metro Bus Contract 1" }))
+                .attr("d", line()
+                    .x(function (d) { return x(d.date) })
+                    .y(function (d) { return y(+d.value) })
+                )
+                .style("stroke-width", 4)
+                .style("fill", "none")
+                .attr("class", "line")
+
+            // A function that update the chart
+            function update1(selectedGroup1) {
+
+                // Create new data with the selection?
+                const dataFilter1 = data.filter(function (d) { return d.name == selectedGroup1 })
+
+                // Give these new data to update line
+                myLine2
+                    .datum(dataFilter1)
+                    .transition()
+                    .duration(1000)
+                    .attr("d", line()
+                        .x(function (d) { return x(d.date) })
+                        .y(function (d) { return y(+d.value) })
+                    )
+                    .attr("class", "line")
+            }
+
+            // When the button is changed, run the updateChart function
+            select("#selectButton1").on("change", function (event, d) {
+                // recover the option that has been chosen
+                const selectedOption1 = select(this).property("value")
+                // run the updateChart function with this selected option
+                update1(selectedOption1)
+            })
+        })
+
+    // Train Comparison
+    createDoubleLineGraphTimeSeriesCSV(
+        "https://raw.githubusercontent.com/abuujo/dataFiles/main/Bus%20Analysis/bus_train.csv",
+        "#lineGraphStartTrain",
+        margin,
+        width,
+        height,
+        false,
+        14,
+        ["axisOrange", "axisOrangeLine", "var(--axisOrange)"],
+        ["Adult Bus Trips", "Adult Train Trips"]
+    )
+
+    // Ferry Comparison
+    createDoubleLineGraphTimeSeriesCSV(
+        "https://raw.githubusercontent.com/abuujo/dataFiles/main/Bus%20Analysis/ferry_bus.csv",
+        "#lineGraphStartFerry",
+        margin,
+        width,
+        height,
+        false,
+        14,
+        ["axisGreen", "axisGreenLine", "var(--axisGreen)"],
+        ["Adult Bus Trips", "Adult Ferry Trips"]
+    )
+
+</script>
+<br />
+<h1><strong>Footnote - Covid And Public Transit</strong></h1>
+<div class="header_links">
+    <a href="{% url 'nswcovid'  %}">⏎ Return</a>
+    <a
+        href="https://data.nsw.gov.au/data/dataset/covid-19-cases-by-location/resource/21304414-1ff1-4243-a5d2-f52778048b29"><em>NSW
+            Health Data</em></a>
+    <a href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-bus"><em>Bus Data</em></a>
+    <a href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-train"><em>Train Data</em></a>
+    <a href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-ferry"><em>Ferry Data</em></a>
+    <a href="https://opendata.transport.nsw.gov.au/dataset/parking-offences"><em>Parking Offenses Data</em></a>
+</div>
+<br />
+<h1>Covid and our bus trips</h1>
+<div id="lineGraphStart"></div>
+<div style=" display: flex; justify-content: center; ">
+    <p>Opal trips taken by adult card holders per month in the Sydney metropolitan area</p>
+</div>
+<h1>What can we learn from the data at hand?</h1>
+<p>Since metropolitan adult Opal bus trips hit rock bottom in April of 2020, they had made a strong recovery (with a
+    temporary dip due to the Nothern Beaches outbreak), rising an average of 608,589 trips a month until April of 2021.
+    The Delta strain hit hard, canceling out any gains that had been made, bringing monthly Adult bus trips to their
+    lowest point in August. </p>
+<p>August 2021 recorded 1,838,385 adult card Opal trips in the Sydney metropolitan area. The average number of trip's
+    from January of 2018 through to Feburary of 2020 were 14,446,509. Thus August's trips constituted approximately 13%
+    of pre-Covid average trips.</p>
+<p>Lastly, assuming we have the same average recovery speed of 608,589 trips a month, it would take just over 20 months
+    for Opal bus trips to hit the pre-Covid average, meaning the Sydney's metropolitan bus system won't reach the
+    pre-Covid average until May of 2023 (if we started in September 2021). </p>
+<br />
+<h1>Breakdown by contract area</h1>
+<p>All of Sydney is not the same, and that is equally true with our bus network. The Sydney bus network is broken down
+    by elements known as contract areas, which constitute different parts of greater Sydney. Using the data at hand, we
+    can break down the first graph by contract area and see how Covid has hit each area differently.</p>
+<p>One thing to keep in mind is that contract area 6 was changed in 2018, so for this, we refer to it as the same name
+    throughout for consistencies sake. If you want to know more about the contract areas and which parts of Syndey each
+    part entails, you can refer to this <a
+        href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-bus-utilisation/resource/426edfc3-7f3b-4c98-bfa4-45694eb81fb3">map
+        here</a>.</p>
+<p>Firstly lets look at how to break down the data given, and peel out Adult bus trips by contract area. For the purpose
+    of clearer data, lets split them into two different categories, inner and outer Sydney. For this, we will take areas
+    6, 7, 8, and 9. Then we label them inner Sydney. The rest of the areas will be labeled as outer. The main reason is
+    that there are wildly different usage numbers between these two groups and should be compared internally. </p>
+<br />
+<h1>Inner Sydney </h1>
+<p>This section details the list of areas 6, 7, 8, and 9. This would approximate the more dense sections of Sydney. From
+    the data, we can show the following graphs per area:</p>
+
+<select id="selectButton"></select>
+<div id="lineGraphSwitch1"></div>
+<br />
+
+
+<h1>Outer Sydney </h1>
+<p>This section details the list of areas from 1-5 and 10-15. This would approximate the less dense sections of Sydney.
+    From the data, we can show the following graphs per area:</p>
+<select id="selectButton1"></select>
+<div id="lineGraphSwitch2"></div>
+
+<br />
+<h1>Things we can take away from this data </h1>
+<p>This data can show us two main things: How the bus network behaves (predictably) during an outbreak and how the
+    network recovers. One thing to take into account is that on one hand, we went to 0 cases after the outbreaks,
+    whereas with Delta, that will probably not be the case (per our living with Covid strategy). We can see from before
+    that if we recover at the same rate as before we probably won't hit parity with pre-Covid levels until 2023. On one
+    hand, this means that fully vaccinated people might enjoy a more spacious bus trip to work for a while to come. On
+    the other, the rational choice would be rationing the number of busses servicing each bus route in the middle of the
+    city</p>
+<p>From the comparison of inner and outer Syndey bus drops, we can see that different contract areas had differing drops
+    pre and post lockdown. Thus we can see that the biggest drop and biggest recovery will be done in the inner Sydney
+    section, with less variance shown in lower population areas.</p>
+<br />
+
+<h1>Comparing bus trips to train trips</h1>
+<p>This is a small follow on from the main article. For completeness's sake, I thought it would be interesting to
+    compare bus trips to both train trips and ferry trips.</p>
+<br />
+<div id="lineGraphStartTrain"></div>
+<br />
+<p>Considering that train trips are on a differen't scale (peak is 24 million vs bus trip's 16 million) these numbers
+    track almost identically.</p>
+   <br/> 
+    <h1>Comparing bus trips to Ferry trips</h1>
+    <div id="lineGraphStartFerry"></div>
+<p>Resources Used:</p>
+<ul>
+    <li><a
+            href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-bus">https://opendata.transport.nsw.gov.au/dataset/opal-trips-bus</a>
+    </li>
+    <li><a
+            href="https://opendata.transport.nsw.gov.au/dataset/parking-offences">https://opendata.transport.nsw.gov.au/dataset/parking-offences</a>
+    </li>
+    <li><a
+            href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-train">https://opendata.transport.nsw.gov.au/dataset/opal-trips-train</a>
+    </li>
+    <li><a
+            href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-ferry">https://opendata.transport.nsw.gov.au/dataset/opal-trips-ferry</a>
+    </li>
+  
+</ul>
+
+
+{% endblock content %}

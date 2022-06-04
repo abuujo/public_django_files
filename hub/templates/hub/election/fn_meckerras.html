@@ -1,0 +1,57 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<!--D3 JS Section-->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+
+    const div = d3.selectAll("div");
+
+</script>
+<br />
+<!--Content Section-->
+<h1><strong>Election 2022 Polling / Prediction</strong></h1>
+<div class="header_links">
+    <a href="{% url 'election'  %}">⏎ Return</a>
+    <a href="https://github.com/abuujo/polling_analyser">Polling Analyser Repo</a>
+    <a href="https://en.wikipedia.org/wiki/Category:Opinion_polling_in_Australia">Wikipedia Polling
+        Resourses</a>
+</div>
+
+<br />
+
+<h4 id="preface"><strong>Preface </strong></h4>
+<p>The numbers you see in the primary tracker are most likely inaccurate. Whilst I do believe the tracker represents
+    trends (i.e. a move toward or away from a particular party), in general the numbers are going to be offset from the
+    actual national trend. For a more detailed understanding of how this plays out, check out the first footnote.</p>
+<h4 id="primary_vote_title"><strong>Primary Vote</strong></h4>
+<p>The primary vote in an Australian election showcases the votes people place as their number 1 preferred party.
+    Typically people will cast a ballot with several parties listed with a box next to them. People will write a number
+    1-n for n parties in order of preference. The polling here attempts to show where the voting intentions of
+    Australians are at the time of the poll.</p>
+
+<h4 id="tpp_vote_title"><strong>Two Party Preferred</strong></h4>
+<p>The two-party preferred vote represents the tally once all preferences have been accounted for. On the ballot, people
+    may have put a party as their number 1 preference, but would not have received enough votes. When this happens, the
+    ballot moves on to the number two and so on until it winds up as one of the two parties left (typically the
+    Coalition (Liberal or National party) and Labor). On a national stage, the two-party preferred vote showcases the
+    run-off of each party and is an interesting stat to look for towards the federal election.</p>
+
+<h4 id="meckerras_title"><strong>Predictions Using The Mackerras Pendulum</strong></h4>
+<p>Now that we have our Two Party Preferred number for the election, we can see the projected outcome on the Meckerras
+    Pendulum. The pendulum is conceptually simple. In the lower house there exists some seats which are "safer" than
+    others.
+    For example, the division of Maranoa in Queensland is held on to by the liberals with 72.49% (2019 election) giving
+    the liberals a massive lead. However, the division of Bass is held on to with a 50.41% lead. Bass is considered a
+    marginal seat where as Maranoa is deep inside the safe category.</p>
+
+<p>During an election, the Mackerras pendulum theory states that a swing in the two party preferred vote will uniformly
+    distribute itself across the seats, and thus if there are 10 seats under a 1.5% swing threshold, with 5 on one side
+    and 5 on the other, you would expect a 1.5% swing in the TPP vote to even out to one side gaining 5 seats from the
+    other.</p>
+
+<p>Now, the theory doesn't mean that those specific seats move hand, as some seats might deepen their lead and others
+    outside of the margin might swing across. The theory states that the number of seats matters in the swing (i.e. 5
+    seats of any margin, mostly marginal seats).</p>
+
+{% endblock content %}

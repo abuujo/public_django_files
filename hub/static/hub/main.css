@@ -1,0 +1,523 @@
+:root {
+    --grey0: #f8f8f8;
+    --grey1: #fdfdfd;
+    --grey2: #d3d3d3;
+    --grey3: #626d75;
+    --grey4: #454e56;
+    --grey5: #2a2e35;
+    --grey6: #02181b;
+    --websitegreenLight: #39a559;
+    --websitegreenDark: #3C2218 ;
+    --lightOrange:#e0ab5b;
+    --darkOrange:#885c1a;
+    --tagDark: rgba(255, 255, 255, .1);
+    --tagLight: rgba(185, 185, 185, 0.699);
+    --lightBlue: #61a8d1;
+    --darkBlue: #323cc5;
+}
+
+.light {
+    --background: var(--grey1);
+    --sidebar: var(--grey2);
+    --cardbg: var(--grey2);
+    --text: var(--grey6);
+    --link: var(--websitegreenDark);
+    --switcher: var(--switcherLight);
+    --axisOrange: var(--darkOrange);
+    --axisGreen: var(--websitegreenDark);
+    --tag: var(--tagLight);
+    --graph: var(--darkBlue);
+    --lnpLine: #1b8fb7;
+    --alpLine: #b71b1e;
+    --grnLine: #58995d;
+    --onpLine: #d7a316;
+    --lnpArea: #187fa2;
+    --alpArea: #a2181a;
+    --grnArea: #4e8852;
+    --onpArea: #bf9113;
+}
+
+.dark {
+    --background: var(--grey4);
+    --sidebar: var(--grey5);
+    --cardbg: var(--grey3);
+    --text: var(--grey1);
+    --link: var(--websitegreenLight);
+    --axisOrange: var(--lightOrange);
+    --switcher: var(--switcherDark);
+    --tag: var(--tagDark);
+    --graph: var(--lightBlue);
+    --lnpLine: #7cc0d8;
+    --alpLine: #dc7c7e;
+    --grnLine: #80dc7c;
+    --onpLine: #f5d374;
+    --lnpArea: #66b6d2;
+    --alpArea: #d66669;
+    --grnArea: #6bd666;
+    --onpArea: #f4cb5d;
+
+
+    --axisGreen: var(--websitegreenLight);
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Charis SIL', serif;
+    font-family: 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--text);
+    transition: background 500ms ease-in-out, color 100ms ease-in-out;
+    background: var(--sidebar);
+    
+    /*background-image: url("images/background.png");
+    background-repeat: repeat;
+    background-attachment: fixed;*/
+}
+
+/* Typography */
+
+a {
+    color: var(--link);
+    transition: color .35s;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--text);
+}
+
+h1 {
+    font-weight: bold;
+}
+
+/* Site Format */
+
+.container {
+    background: var(--background);
+}
+
+@media (min-width: 550px) {
+    .main_row {
+        min-height: 100vh;
+    }
+    .main_content {
+        min-height: 100vh;
+    }
+}
+
+.profile {
+    max-width: 80%;
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    border: var(--link);
+    border-width: 5px;
+    border-style: solid;
+}
+
+@keyframes color-rotate {
+    from {
+        filter: hue-rotate(0deg);
+    }
+    to {
+        filter: hue-rotate(360deg);
+    }
+}
+
+.profile:hover {
+    animation: color-rotate 10s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@media (min-width: 550px) {
+    .sidebar {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0px;
+    }
+}
+
+.sidebar {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.main_content {
+    background: var(--background);
+}
+
+.check {
+    padding-top: 0px;
+}
+
+/* Theme Switcher */
+
+i {
+    width: 40px;
+    height: 40px;
+    color: var(--axisOrange);
+    font-size: 22px;
+    border-radius: 50%;
+    background: var(--link);
+    cursor: pointer;
+    position: absolute;
+    top: 80%;
+    right: 17%;
+}
+
+/* Nav Bar */
+
+.nav_bar {
+    width: 100%;
+    height: 30px;
+    background: var(--background);
+}
+
+@media (min-width: 550px) {
+    .nav_bar {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0px;
+    }
+}
+
+.showcase {
+    width: 95%;
+    height: 300px;
+    margin: 15px auto;
+    background: var(--background);
+    transition: all 500ms;
+    text-align: center;
+}
+.showcase>a>p {
+    color: var(--text);
+}
+
+.showcase:hover {
+    transform: translateY(-3px) scale(1.05);
+}
+
+.showcase>a>h3 {
+    color: var(--link);
+    font-weight: bold;
+    transition: color .35s;
+}
+
+.showcase>a>p {
+    margin-left:30px;
+    margin-right:30px;
+}
+
+
+
+.banner_img {
+    width: 100%;
+    height: 60%;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+.footnoteone {
+    margin-left: 15px;
+    filter: brightness(0.7);
+}
+
+.header_links {
+    margin-bottom: 15px;
+}
+
+.header_links>a {
+    display: inline-block;
+    margin-top: 3px;
+    margin-right: 5px;
+    padding: 0px 9px;
+    border-radius: 3px;
+    white-space: nowrap;
+    background: var(--tag);
+}
+
+.indent { 
+    margin-left: 20px;
+}
+
+svg {
+    font-size: 0.5em;
+}
+
+.line {
+    fill: none;
+    stroke: var(--graph);
+    stroke-width: 2px;
+}
+
+.graphText{
+    fill: var(--text);
+    font-size: 16px;
+  }
+
+.icon {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    vertical-align: -.125em;
+}
+
+.axisRed text{
+    fill: var(--axisRight);
+  }
+  
+  .axisGreen text{
+    fill: var(--axisGreen);
+  }
+  
+  .axisOrange text {
+    stroke:  var(--axisOrange);
+  }
+  
+  .axisRedLine {
+    stroke:  var(--axisRight);
+    stroke-width: 2px;
+  }
+  
+  .axisGreenLine {
+    stroke:  var(--axisGreen);
+    stroke-width: 2px;
+  }
+  
+  .axisOrangeLine {
+    stroke:  var(--axisOrange);
+    stroke-width: 2px;
+  }
+
+
+  .objecttable{
+    border-collapse: collapse;
+    margin: 25px 0;
+    width:100%;
+  
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .objecttable td {
+    padding: 8px;
+  }
+  
+  .objecttable, th, td {
+    padding: 12px 8px;
+  }
+  
+  .objecttable tr {
+    background-color: var(--table);
+    border-bottom: 1px solid var(--text);
+    color: var(--text);
+    text-align: left;
+  }
+  
+  .objecttable tbody tr {
+    border-bottom: 1px solid var(--text);
+  }
+  
+  .objecttable tr th {
+    background-color: var(--axisGreen);
+    color: #ffffff;
+    text-align: left;
+  }
+  
+  .objecttable tbody tr:nth-of-type(even) {
+    background-color: var(--cardbg);
+  }
+  .objecttable tbody tr:last-of-type {
+    border-bottom: 2px solid var(--axisGreen);
+  }
+  
+  
+  .grid line {
+    stroke: var(--text);
+    stroke-opacity: 0.2;
+    shape-rendering: crispEdges;
+  }
+  
+  .grid path {
+    stroke-width: 0;
+  }
+
+.posts-list {
+    padding: 0;
+}
+
+.posts-list-item {
+    list-style: none;
+    padding: .4em 0;
+}
+
+.blog-post:not(:last-child) {
+    border-bottom: 1px dashed var(--text);
+}
+
+.posts-list-item-description {
+    display: block;
+    font-size: .8em;
+}
+
+.tag {
+    display: inline-block;
+    margin-right: .2em;
+    padding: 0 .6em;
+    font-size: .9em;
+    border-radius: .2em;
+    white-space: nowrap;
+    background: var(--tag);
+    transition: color .35s, background .35s
+}
+
+.tag:hover {
+    transition: color .25s, background .05s;
+    background: rgba(255, 255, 255, .3)
+}
+
+.tags-list {
+    padding: 0
+}
+
+.post_content>p>img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.post_content>p>a>img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+/*
+=== Chess CSS ===
+*/
+
+#FenInDiv {
+    position: relative;
+}
+
+#fenIn {
+    width: 400px;
+}
+
+#Board {
+    width: 400px;
+    height: 400px;
+    border-style: solid;
+    border-width: 2px;
+    position: relative;
+}
+
+.Square {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+
+.Dark {
+    background-color: #484018;
+}
+
+.Light {
+    background-color: #9e7540;
+}
+
+.SqSelected {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #e3d18a;
+}
+
+.rank1 {
+    top: 350px;
+}
+
+.rank2 {
+    top: 300px;
+}
+
+.rank3 {
+    top: 250px;
+}
+
+.rank4 {
+    top: 200px;
+}
+
+.rank5 {
+    top: 150px;
+}
+
+.rank6 {
+    top: 100px;
+}
+
+.rank7 {
+    top: 50px;
+}
+
+.rank8 {
+    top: 0px;
+}
+
+.file1 {
+    left: 0px;
+}
+
+.file2 {
+    left: 50px;
+}
+
+.file3 {
+    left: 100px;
+}
+
+.file4 {
+    left: 150px;
+}
+
+.file5 {
+    left: 200px;
+}
+
+.file6 {
+    left: 250px;
+}
+
+.file7 {
+    left: 300px;
+}
+
+.file8 {
+    left: 350px;
+}
+
+.Piece {
+    position: absolute;
+}
+
+.info {
+    background: var(--lnpArea);
+    opacity: 0.8;
+    border-radius: 10px;
+    color: var(--text);
+    padding: 10px;
+}
+
+.cntr-img {
+    margin: 0 auto;
+    display: block;
+}

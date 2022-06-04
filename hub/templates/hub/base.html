@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<!--Head Section-->
+
+<head>
+
+    <!--Favicon-->
+    <!--I remember a time when the header tag just had your title and css-->
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'hub/images/favicon/apple-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'hub/images/favicon/apple-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'hub/images/favicon/apple-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'hub/images/favicon/apple-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'hub/images/favicon/apple-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'hub/images/favicon/apple-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'hub/images/favicon/apple-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'hub/images/favicon/apple-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'hub/images/favicon/apple-icon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'hub/images/favicon/android-icon-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'hub/images/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'hub/images/favicon/favicon-96x96.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'hub/images/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'hub/images/favicon/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#39a559">
+    <meta name="msapplication-TileImage" content="{% static 'hub/images/favicon/ms-icon-144x144.png' %}">
+
+    <!--Meta Tags-->
+
+    <!--Non card related-->
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.75.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Jonathan Abood" />
+    <meta property="og:type" content="website" />
+    <meta property="og:updated_time" content="2021-11-3T00:00:00+00:00" />
+    <meta property="og:site_name" content="Jonathan's Site" />
+    
+    <!--Card Related tags-->
+    <meta name="theme-color" content="#39a559">
+    <!--<meta property="og:url" content="https://metatags.io/">-->
+    <meta property="og:image" content="{% static 'hub/images/conway.png' %}">
+    <meta property="twitter:card" content="summary_large_image">
+    <!--<meta property="twitter:url" content="https://metatags.io/">-->
+    <meta property="twitter:image" content="{% static 'hub/images/conway.png' %}">
+
+    {% if meta %}
+    <title>{{meta.title}}</title>
+    <meta property="og:title" content="{{meta.title}}">
+    <meta property="og:description" content="{{meta.description}}">
+    <meta property="twitter:title" content="{{meta.title}}">
+    <meta property="twitter:description" content="{{meta.description}}">
+    {% else %}
+    <title>Jonathan Abood's Site</title>
+    <meta property="og:title" content="Jonathan Abood's Site">
+    <meta property="og:description" content="My personal site containing data analysis, my blog and some useful guides.">
+    <meta property="twitter:title" content="Jonathan Abood's Site">
+    <meta property="twitter:description" content="My personal site containing data analysis, my blog and some useful guides.">
+    {% endif %}
+
+    <!--Google Font (Inter)-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital@0;1&family=Roboto&display=swap" rel="stylesheet">
+    <!--CSS Links-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'hub/normalize.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'hub/skeleton.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'hub/main.css' %}">
+
+    <!--Console -->
+    <script type="text/javascript">
+        if (!window.console) console = { log: function () { } };
+    </script>
+
+    <!--Code Highlighter-->
+    <script src="{% static 'hub/js/hlight.js' %}"></script>
+    <script type="text/javascript" charset="UTF-8"
+  src="/path/to/highlightjs-vba/dist/vba.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <link rel="stylesheet" type="text/css" href="{% static 'hub/lioshi.min.css' %}">
+
+</head>
+
+<!--Body Section-->
+
+<body class="light">
+
+    <div class="container">
+        <div class="row main_row">
+
+            <!--Side Bar-->
+            <div class="four columns check" id="resize">
+
+                <div class="sidebar">
+                    <br/>
+                    <div class="icon_main" style="position: relative;">
+                        <a href="{% url 'home'  %}"><img id="profile" src="{% static 'hub/images/profilenight.png' %}" class="profile"
+                            alt="Jonathan"></a>
+                        <i class="bi bi-brightness-high-fill" id="toggleDark"></i>
+                    </div>
+                    <br />
+                    <h1 style="margin-bottom: 2px;"><strong>Jonathan Abood </strong></h1>
+                    <h6>
+                        <a href="https://github.com/abuujo" target="_blank">GitHub</a> &#8226;
+                        <a href="https://www.linkedin.com/in/jonathan-abood/" target="_blank">LinkedIn</a>
+                        <br /><br />
+                        Data Analyst, Programmer, WebDev, Excel and VBA Specialist. I built this website using <a href="https://www.djangoproject.com/" target="_blank">Django</a> , D3.js, skeleton.css, highlihgt.js and many more resources. All graph data comes from my GitHub.  <br />
+                    </h6>
+                </div>
+            </div>
+
+            <!--Main Content-->
+            <div class="eight columns main_content" id="resize" style="padding-top: 0px;">
+
+                <!-- Content for each individual page -->
+                {% block content %}{% endblock %}
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+<!--Theme Switcher-->
+<script defer type="text/javascript">
+
+    const body = document.body;
+    const theme = localStorage.getItem('theme');
+
+    if (theme) {
+        if (theme == 'light') {
+            body.classList.replace('dark', 'light');
+            document.getElementById("profile").src = "{% static 'hub/images/profile.png' %}";
+            document.getElementById('toggleDark').classList.replace('bi-moon', 'bi-brightness-high-fill');
+        } else {
+            body.classList.replace('light', 'dark');
+            document.getElementById("profile").src = "{% static 'hub/images/profilenight.png' %}";
+        }
+    }
+
+    const toggle = document.getElementById('toggleDark');
+
+    toggle.addEventListener('click', function () {
+
+        this.classList.toggle('bi-brightness-high-fill');
+        if (this.classList.toggle('bi-moon')) {
+            body.classList.replace('light', 'dark');
+            localStorage.setItem('theme', 'dark');
+            document.getElementById("profile").src = "{% static 'hub/images/profilenight.png' %}";
+        } else {
+            body.classList.replace('dark', 'light');
+            localStorage.setItem('theme', 'light');
+            document.getElementById("profile").src = "{% static 'hub/images/profile.png' %}";
+        }
+        
+    });
+
+
+    const mediaQuery = window.matchMedia('(min-width: 550px)');
+
+    // Side bar stuff
+    function handleTabletChange(e) {
+
+        let cont = document.querySelector('.container');
+        cont_height = cont.offsetHeight;
+
+
+        console.log(cont.offsetHeight);
+
+        // Check if the media query is true
+        if (e.matches) {
+            // Then log the following message to the console
+            console.log('Media Query Matched!');
+            document.getElementById('resize').setAttribute("style", "height:" + cont_height + "px;");
+        } else {
+
+        }
+    }
+
+    // Listener 
+    mediaQuery.addListener(handleTabletChange);
+
+    // initial
+    handleTabletChange(mediaQuery);
+
+</script>
+
+</html>

@@ -1,0 +1,159 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<br />
+<h1><strong>Building a React Data Blog</strong></h1>
+<div class="header_links">
+	<a href="{% url 'home'  %}">⏎ Return</a>
+	<a href="https://github.com/abuujo/data-portfolio">
+		Public Files Repo
+	</a>
+</div>
+	<h1>Getting started with D3</h1>
+	<p>When I first started with D3.js, I couldn’t load a single SVG. I tried several different alterations of a project
+		setup, some ended up working and others fell short. In the end, the most useful foundation for creating and
+		editing a data document with D3 is using the React framework. The purpose of this document is just to create a
+		simple guide for people that want to avoid all the initial stages and just focus on creating their data
+		documents. The process follows three basic stages to set up an environment, then we will create a simple d3
+		document info card. For this basic tutorial, we will make a simple infographic on the bitcoin price crash of
+		2018, and cover issues such as axis, reading a CSV, SVG, and responsive graphs.
+	</p>
+	<h1>Setting up the project</h1>
+	<p>The first stage is to install all the necessary tools to work on this project. Noting that I use windows, the
+		first place to start is to install node.js, specifically, we will need the package manager npm. The following
+		steps will take us to where we need to be for the next stage:</p>
+	<ol>
+		<li>Install Node.js using this link: <a
+				href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a> and use the installation
+			method necessary for you. If you are using Windows, I would recommend installing <a
+				href="https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701#activetab=pivot:overviewtab">Windows
+				Terminal</a>, which is an easier-to-use version of the command prompt. When completed, enter the
+			following command in your terminal to see if Node is successfully installed:
+			<pre class="language-bash">
+				<code>node -v</code>
+			</pre>
+		</li>
+		<li>Now, with Node installed, the npm package manager will be installed as well. Note that you need to update
+			npm on its own, separate from Node. Now we can run three commands to get us our React app up and running.
+			Firstly, navigate to a directory that you wish to create the React app in, noting that running the next
+			command will make a subdirectory that will house all the necessary files for the project to run:
+			<pre class="language-bash">
+<code>npx create-react-app d3-starter 
+cd d3-starter 
+npm start</code>
+			</pre>
+		</li>
+		<li>Now with our base app installed and running, we quickly want to quit the server so that we can install d3
+			onto our project. Simply run the following command after quitting using cntrl-c and hitting 'y' and pressing
+			enter.:
+			<pre class="language-bash">
+				<code>npm install d3 --save</code>
+			</pre>
+		</li>
+	</ol>
+	<p>React will update the project we are working on every time we click save, so we can leave the project running in
+		the background. With whichever code editor you prefer to use, open the app folder, and open the App.js within
+		the src directory, change a few words and click save. This demonstrates the updating method of React.</p>
+
+	<h1>Setting up our document</h1>
+	<p>Now that we have our application all set up, we can run the npm start command again and begin working on our
+		project. Inside the application directory, we have several files and folders that are important for us to work
+		on. The one to consider today is the src folder, which contains the app.js that we will modify for our initial
+		project. The first step is to establish our Apps.js such that it imports the tools we intend on using, and gives
+		us an element inside the rendered section to use. </p>
+		<pre class="language-javascript">
+			<code>import React, { useRef, useEffect, useState } from "react";
+import {
+	select, selectAll,
+	line,
+	axisBottom,
+	scaleLinear,
+	axisLeft,
+	curveCardinal
+} from "d3";
+	
+function App() {
+	// Code will Go here
+	// ========================
+	// Above the return section
+	return (
+		<div id="my_dataviz">
+		</div >
+	);
+}
+export default App;</code>
+			</pre>
+	<p>With our above code, we will render a blank screen with a simple div element for us to work on. For the task at
+		hand, d3 will use React hooks to present our visualised data on the screen. From this point on, all the code for
+		creating our visualisation will go inside the commented section on the above code .</p>
+
+	<h1>Finishing off with a simple line chart</h1>
+	<p>Now we have the simple layout of our app.js, if you know what you're doing, you can go from here on your own. For
+		the rest of us the following section of code will just implement a simple line graph. We'll start by defining
+		the dimensions of our graph. and move on to our useEffect().</p>
+	<p>Note that on line's 28 we have some replaceable code within ** ** delimiters. I have that there because the
+		syntax highlighter that I use for this site can't pass that code. The code that should be there is:
+		`translate(0, 150)` with 150 being the height variable.</p>
+		<pre class="language-javascript">
+			<code>var margin = {top: 10, right: 30, bottom: 30, left: 60},
+width = 350 - margin.left - margin.right,
+height = 400 - margin.top - margin.bottom;
+const [data, setData] = useState([25, 30, 45, 60, 20, 65, 75]);
+useEffect(() => {
+	// Second line chart
+	var svg1 = select("#lineGraph")
+		.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform",
+			"translate(" + margin.left + "," + margin.top + ")");
+	const xScale = scaleLinear()
+		.domain([0, data.length - 1])
+		.range([0, 300]);
+	const yScale = scaleLinear()
+		.domain([0, 150])
+		.range([150, 0]);
+	svg1.append("g")
+		.attr("transform", **Special Code Here**)
+		.call(axisBottom(xScale));
+	svg1.append("g")
+		.call(axisLeft(yScale));
+	const myLine = line()
+		.x((value, index) => xScale(index))
+		.y(yScale)
+		.curve(curveCardinal);
+	// Add the line
+	svg1
+		.selectAll(".line")
+		.data([data])
+		.join("path")
+		.attr("class", "line")
+		.attr("d", myLine)
+		.attr("fill", "none")
+		.attr("stroke", "blue");
+}, [data]);</code>
+			</pre>
+	<p>Now we have finished our first graph. Hopefully this guide has helped you getting started with d3. From here the
+		best thing to do is look at other peoples templates and submitted works. If you know what you're doing, you can
+		go on from here. The next section will just be a simple line by line breakdown of everything inside the
+		useEffect() hook, so that you can understand what is happening conceptually to bring the graph to life.</p>
+	<br />
+	<img src="{% static 'hub/images/first.PNG' %}" alt="first d3 graph" class = "cntr-img">
+	<br />
+	<h1>Line by line</h1>
+	<p>The first three lines give us our dimension data to work with. This simply denotes the x/y of our SVG element on
+		our page. Line 5 gives us some dummy data to work with, which is inserted into the hook on line 50 using the
+		dependency array. </p>
+	<p>Inside the useEffect hook, we begin to define our SVG. Lines 10 to 16 attach an SVG to our div and define its
+		dimensions using the variables we made before. From 18 to 24 we create the scale for our x and y-axis. Note that
+		these are not the actual ticks we see on the graph, but the number ranges that they are built off of.</p>
+	<p>On line 26, we begin to add our axis to the graph. We add a g element to our div element and attach the axis. On
+		line 28 you see the .call(axisBottom(xScale)), think of this as adding a bottom axis to our div element and
+		populating it with the numbers we created in the xScale.</p>
+	<p>Line 32 to 35 defines our line object, defines its values, and gives is the cardinal curve property. Then from
+		line 38 to 45 we finish off by drawing the line element onto our div element.</p>
+
+</div>
+
+{% endblock content %}

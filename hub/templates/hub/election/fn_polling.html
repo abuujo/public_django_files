@@ -1,0 +1,95 @@
+{% extends "hub/base.html" %}
+{% load static %}
+{% block content %}
+<!--D3 JS Section-->
+
+<script type="module">
+
+    import { buildScatterPlotTimeCSV } from '{% static "hub/js/graphLibrary.js" %}'
+
+    // Dimensions
+    var margin = { top: 10, right: 30, bottom: 70, left: 60 },
+        width = 750 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+
+    // Use for importing conf intervals.
+    var sub_links_one = [
+        ["https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2019/unweighted/primary_vote_lnp.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2019/unweighted/primary_vote_alp.csv",
+            "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2019/unweighted/primary_vote_grn.csv"],
+
+        ["var(--lnpArea)", "var(--alpArea)", "var(--grnArea)"],
+        ["var(--lnpLine)", "var(--alpLine)", "var(--grnLine)"],
+    ]
+
+    var labels = [
+        ["lnp", "alp", "grn"],
+        ["var(--lnpArea)", "var(--alpArea)", "var(--grnArea)"],
+        ["Coalition", "Aus Labor Party", "Green Party"]
+    ];
+
+    buildScatterPlotTimeCSV(
+        "https://raw.githubusercontent.com/abuujo/polling_analyser/main/files/2019/unweighted/primary_vote_poll_data.csv",
+        "#pollvselec",
+        margin,
+        width,
+        height,
+        false,
+        sub_links_one,
+        labels,
+        false,
+        false,
+        true
+    );
+
+    // Post SVG
+    handleTabletChange(mediaQuery);
+
+</script>
+
+<br />
+<!--Content Section-->
+<h1><strong>Footnote - Polling and Weighted Polling</strong></h1>
+<div class="header_links">
+    <a href="{% url 'election'  %}">⏎ Return</a>
+    <a href="https://github.com/abuujo/polling_analyser">Polling Analyser Repo</a>
+    <a href="https://en.wikipedia.org/wiki/Category:Opinion_polling_in_Australia">Wikipedia Polling
+        Resourses</a>
+</div>
+<br />
+
+<h4 id="preface"><strong>Australia's 2019 Election</strong></h4>
+<p>In the leadup to the 2019 election, many saw the ALP as having an 'unlosable' position. If you <a
+        href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2019_Australian_federal_election">followed the
+        polling</a> you would have seen a large two party preferred (tpp) gap (although shrinking over time) in their
+    favour.
+    Following the methadology of Meckerras, many marginal seats would have been won by the ALP. The 2019 election showed
+    that the opposite
+    happened, with the LNP increasing its seats by 1 (note that that is of the 2016 election, but in the leadup to the
+    2019 election the re-districting placed the LNP at 73
+    seats to the ALP's 72).</p>
+
+<div id="pollvselec"></div>
+
+<h4 id="preface"><strong>Data vs Election Result</strong></h4>
+<p>The above graph shows the polling numbers for the three major parties in the year leading up to the 2019 election.
+    Let's consider the following points:</p>
+<ul>
+    <li>The primary vote from the 2019 election was broken down like this: lnp: 41.44%, alp: 33.34%, and grn: 10.4%.
+    </li>
+    <li>LNP: lnp's area at the end of the polling period was between 35.47 to 41.29.</li>
+    <li>ALP: alp's area at the end of the polling period was between 31.97 to 40.43.</li>
+    <li>GRN: grn's area at the end of the polling period was between 7.20 to 14.39.</li>
+</ul><br />
+<p>For the two major parties, we can see a pretty big mismatch. Ideally, we want the polling to place the results of the
+    actual election closer to the trend line of the graph, not towards (or outside of) the confidence interval
+    endpoints. From the comparison we know two things: firstly that the polls under-represent the lnp and over-represent
+    the alp (since the lnp overperformed their polls, and the alp underperformed).</p>
+
+<p>It would be incorrect to simply give the lnp a +n to every poll and the alp a -n, but there are methods to try to
+    make the graph more accurate. Note that the goal is not to bring the polling
+    in-line with the election results, but to weight consistant outliers and determine if a weighted tracker is more
+    accurate than an unweighted one. If we try to force the polling to match the election results, it would probably
+    prove worthless when applied to the 2022 tracker (which is the goal).</p>
+{% endblock content %}
